@@ -1,0 +1,335 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vedika AI - Ultra Fast</title>
+    
+    <!-- Parsers -->
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/marked-katex-extension/lib/index.umd.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github-dark.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <style>
+        /* Flat, Ultra-Fast UI (No heavy blurs or box-shadows) */
+        :root {
+            --bg-color: #212121;
+            --chat-bg: #2f2f2f;
+            --text-color: #ececf1;
+            --input-bg: #40414f;
+            --border-color: #565869;
+            --accent-color: #10a37f;
+            --reasoning-bg: #2a2b32;
+        }
+
+        body { 
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; 
+            background-color: var(--bg-color); 
+            color: var(--text-color);
+            margin: 0; 
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+        }
+
+        header {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 15px;
+            background-color: var(--bg-color);
+            border-bottom: 1px solid var(--border-color);
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: white;
+        }
+
+        #chat-container { 
+            flex: 1; 
+            overflow-y: auto; 
+            padding-bottom: 120px; 
+            scroll-behavior: auto; /* Removed smooth scroll for faster rendering */
+        }
+
+        .message-row { padding: 25px 20px; display: flex; justify-content: center; border-bottom: 1px solid rgba(0,0,0,0.1); }
+        .message-row.ai { background-color: var(--chat-bg); }
+        
+        .message-content { max-width: 800px; width: 100%; display: flex; gap: 20px; line-height: 1.6; font-size: 1rem; }
+        
+        .avatar { width: 30px; height: 30px; border-radius: 4px; display: flex; align-items: center; justify-content: center; font-weight: bold; flex-shrink: 0; color: white;}
+        .user-avatar { background-color: #5436da; }
+        .ai-avatar { background-color: var(--accent-color); }
+
+        /* Reasoning Box UI */
+        .reasoning-box {
+            background-color: var(--reasoning-bg);
+            border-left: 3px solid #8b5cf6;
+            border-radius: 6px;
+            padding: 12px 15px;
+            margin-bottom: 15px;
+            font-size: 0.9rem;
+            color: #a1a1aa;
+            display: none; /* Hidden initially */
+        }
+        .reasoning-header { font-weight: 600; color: #a78bfa; margin-bottom: 5px; display: flex; align-items: center; gap: 8px; }
+        .reasoning-text { white-space: pre-wrap; font-family: monospace; }
+
+        .response-text { width: 100%; }
+
+        /* Markdown Styles */
+        .markdown-body img { max-width: 100%; border-radius: 8px; margin-top: 10px; }
+        .markdown-body pre { background: #000; padding: 15px; border-radius: 8px; overflow-x: auto; margin: 10px 0; }
+        .markdown-body p { margin: 0 0 10px 0; }
+        .markdown-body code { background: rgba(255,255,255,0.1); padding: 2px 4px; border-radius: 4px; font-family: monospace; }
+
+        /* Fast Input Area */
+        .input-wrapper { position: fixed; bottom: 0; left: 0; width: 100%; padding: 20px; background: linear-gradient(180deg, transparent, var(--bg-color) 40%); display: flex; justify-content: center; box-sizing: border-box; }
+        .input-box { max-width: 800px; width: 100%; background-color: var(--input-bg); border-radius: 12px; display: flex; align-items: center; padding: 10px 15px; border: 1px solid var(--border-color); box-shadow: 0 0 15px rgba(0,0,0,0.1); }
+        
+        .file-upload-label { cursor: pointer; padding: 5px; margin-right: 10px; color: #c5c5d2; }
+        input[type="file"] { display: none; }
+        input[type="text"] { flex: 1; background: transparent; border: none; color: white; font-size: 1rem; outline: none; padding: 10px 0; }
+        
+        button { background-color: transparent; color: var(--accent-color); border: none; cursor: pointer; padding: 10px; }
+        button:disabled { color: #565869; cursor: not-allowed; }
+
+        #image-preview { display: none; position: absolute; bottom: 70px; left: 20px; background: var(--chat-bg); padding: 5px; border-radius: 8px; border: 1px solid var(--border-color); }
+        #image-preview img { max-height: 50px; border-radius: 4px; }
+        .remove-img { position: absolute; top: -5px; right: -5px; background: #ef4444; color: white; border-radius: 50%; width: 16px; height: 16px; font-size: 10px; display: flex; align-items: center; justify-content: center; cursor: pointer; }
+    </style>
+</head>
+<body>
+
+    <header>
+        <i data-lucide="bot" style="color: var(--accent-color); margin-right: 10px;"></i> Vedika - Fast Stream
+    </header>
+
+    <div id="chat-container">
+        <div class="message-row ai">
+            <div class="message-content">
+                <div class="avatar ai-avatar">V</div>
+                <div class="response-text markdown-body">
+                    <p>Hi I am Vedika 3.5 Flash. Ask me anything </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="input-wrapper">
+        <div class="input-box">
+            <div id="image-preview">
+                <img id="preview-img" src="" alt="Preview">
+                <div class="remove-img" onclick="removeImage()">✕</div>
+            </div>
+
+            <label for="imageUpload" class="file-upload-label"><i data-lucide="paperclip" size="20"></i></label>
+            <input type="file" id="imageUpload" accept="image/*" onchange="handleImageUpload(event)">
+            
+            <input type="text" id="userInput" placeholder="वेदिका से पूछें..." onkeypress="handleEnter(event)" autocomplete="off">
+            <button id="sendBtn" onclick="processRequest()">
+                <i data-lucide="send" size="20"></i>
+            </button>
+        </div>
+    </div>
+
+    <script>
+        lucide.createIcons();
+        
+        // Fast Markdown Setup
+        marked.setOptions({ breaks: true });
+        marked.use(markedKatex({ throwOnError: false }));
+
+        const systemPrompt = `You are Vedika, a professional and highly advanced AI assistant. You are developed by Divy Patel Deep minds
+        1. Default Language: You MUST respond in English by default for maximum speed and clarity.
+        2. Adaptation: Switch to another language only if the user explicitly starts speaking in that language.
+        3. Professionalism: Be warm, patriotic towards India, and always use respectful address.
+        4. Technical: Use Markdown for formatting and LaTeX for mathematics.
+        5. Images: For generating images, use: ![Alt](https://image.pollinations.ai/prompt/encoded_prompt?width=1024&height=1024&nologo=true).`;
+
+        
+        let chatHistory = [{ role: 'system', content: systemPrompt }];
+        let currentImageBase64 = null;
+        const chatContainer = document.getElementById("chat-container");
+
+        function scrollToBottom() {
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+        }
+
+        function handleImageUpload(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    currentImageBase64 = e.target.result;
+                    document.getElementById("preview-img").src = currentImageBase64;
+                    document.getElementById("image-preview").style.display = "block";
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        function removeImage() {
+            currentImageBase64 = null;
+            document.getElementById("imageUpload").value = "";
+            document.getElementById("image-preview").style.display = "none";
+        }
+
+        function handleEnter(event) { if (event.key === "Enter") processRequest(); }
+
+        async function processRequest() {
+            const inputField = document.getElementById("userInput");
+            const sendBtn = document.getElementById("sendBtn");
+            const userText = inputField.value.trim();
+
+            if (!userText && !currentImageBase64) return;
+
+            // Render User Message
+            const userDiv = document.createElement("div");
+            userDiv.className = "message-row user";
+            let displayHTML = marked.parse(userText || "");
+            if (currentImageBase64) displayHTML += `<img src="${currentImageBase64}" style="max-height: 150px; border-radius: 8px; margin-top: 10px;">`;
+            userDiv.innerHTML = `<div class="message-content"><div class="avatar user-avatar">U</div><div class="response-text markdown-body">${displayHTML}</div></div>`;
+            chatContainer.appendChild(userDiv);
+
+            let apiContent = userText;
+            if (currentImageBase64) {
+                apiContent = [{ type: "text", text: userText || "Analyze this." }, { type: "image_url", image_url: { url: currentImageBase64 } }];
+            }
+            chatHistory.push({ role: 'user', content: apiContent });
+
+            inputField.value = "";
+            sendBtn.disabled = true;
+            removeImage();
+            scrollToBottom();
+
+            // Render AI Framework (Reasoning Box + Response Box)
+            const aiDiv = document.createElement("div");
+            aiDiv.className = "message-row ai";
+            
+            const uniqueId = Date.now();
+            aiDiv.innerHTML = `
+                <div class="message-content">
+                    <div class="avatar ai-avatar">V</div>
+                    <div class="response-wrapper" style="width: 100%;">
+                        <div class="reasoning-box" id="reasoning-box-${uniqueId}">
+                            <div class="reasoning-header"><i data-lucide="brain-circuit" size="16"></i> विचार प्रक्रिया...</div>
+                            <div class="reasoning-text" id="reasoning-text-${uniqueId}"></div>
+                        </div>
+                        <div class="response-text markdown-body" id="response-text-${uniqueId}">
+                            <span style="color:#888;">...</span>
+                        </div>
+                    </div>
+                </div>`;
+            chatContainer.appendChild(aiDiv);
+            lucide.createIcons();
+
+            const reasoningBox = document.getElementById(`reasoning-box-${uniqueId}`);
+            const reasoningTextElement = document.getElementById(`reasoning-text-${uniqueId}`);
+            const responseElement = document.getElementById(`response-text-${uniqueId}`);
+            scrollToBottom();
+
+            try {
+                // Anti-block cache buster URL
+                const url = `https://text.pollinations.ai/?cacheBust=${Date.now()}`;
+                const response = await fetch(url, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ 
+                        messages: chatHistory, 
+                        seed: Math.floor(Math.random() * 900000), 
+                        stream: true 
+                    })
+                });
+
+                if (!response.ok) throw new Error("API Error");
+
+                const reader = response.body.getReader();
+                const decoder = new TextDecoder("utf-8");
+                
+                let fullReasoning = "";
+                let fullContent = "";
+                let buffer = "";
+                let isFirstContent = true;
+
+                // THROTTLING SETUP: To prevent browser lag
+                let lastUpdate = Date.now();
+
+                while (true) {
+                    const { done, value } = await reader.read();
+                    
+                    if (done) {
+                        // FINAL RENDER: Do full markdown parse only when completely finished
+                        if (fullContent) {
+                            responseElement.innerHTML = marked.parse(fullContent);
+                            responseElement.querySelectorAll('pre code').forEach(block => hljs.highlightElement(block));
+                        }
+                        scrollToBottom();
+                        break;
+                    }
+
+                    buffer += decoder.decode(value, { stream: true });
+                    const lines = buffer.split('\n');
+                    buffer = lines.pop(); // Keep incomplete part in buffer
+
+                    let contentChanged = false;
+                    let reasoningChanged = false;
+
+                    for (const line of lines) {
+                        if (line.startsWith('data: ') && line !== 'data: [DONE]') {
+                            try {
+                                const parsed = JSON.parse(line.slice(6));
+                                const delta = parsed.choices?.[0]?.delta || {};
+
+                                // 1. Handle Reasoning (Thinking)
+                                if (delta.reasoning_content) {
+                                    fullReasoning += delta.reasoning_content;
+                                    reasoningBox.style.display = "block";
+                                    reasoningChanged = true;
+                                }
+
+                                // 2. Handle Main Content
+                                if (delta.content) {
+                                    if (isFirstContent) { responseElement.innerHTML = ""; isFirstContent = false; }
+                                    fullContent += delta.content;
+                                    contentChanged = true;
+                                }
+                            } catch (e) {} // Ignore broken JSON chunk
+                        }
+                    }
+
+                    // THROTTLED UI UPDATE (Updates screen max every 50ms)
+                    const now = Date.now();
+                    if (now - lastUpdate > 50) {
+                        if (reasoningChanged) {
+                            reasoningTextElement.textContent = fullReasoning; // textContent is ultra fast
+                        }
+                        if (contentChanged) {
+                            // During stream, use marked but without heavy plugins, or just append raw text for max speed.
+                            // Here we parse markdown to keep it looking decent during stream.
+                            responseElement.innerHTML = marked.parse(fullContent);
+                        }
+                        scrollToBottom();
+                        lastUpdate = now;
+                    }
+                }
+
+                chatHistory.push({ role: 'assistant', content: fullContent });
+
+            } catch (error) {
+                responseElement.innerHTML = "<span style='color:#ef4444;'>सर्वर से संपर्क टूट गया है। कृपया दोबारा प्रयास करें।</span>";
+            } finally {
+                sendBtn.disabled = false;
+                inputField.focus();
+            }
+        }
+    </script>
+</body>
+</html>
+
