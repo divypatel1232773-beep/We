@@ -6,7 +6,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Vedika AI Suite - Enterprise Edition</title>
     
-    <!-- Dependencies -->
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
@@ -32,7 +31,8 @@
             margin: 0; background-color: var(--bg-body);
             background-image: radial-gradient(circle at 50% -20%, #ffffff 0%, transparent 80%);
             color: var(--text-main); font-family: var(--font-stack);
-            height: 100vh; display: flex; justify-content: center;
+            height: 100dvh; /* Changed to dvh for perfect mobile rendering */
+            display: flex; justify-content: center;
             align-items: center; overflow: hidden; -webkit-tap-highlight-color: transparent;
         }
 
@@ -48,23 +48,27 @@
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(229, 229, 234, 0.95); backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px);
             z-index: 10000; display: flex; justify-content: center; align-items: center;
-            transition: opacity 0.4s ease, visibility 0.4s ease;
+            transition: opacity 0.4s ease, visibility 0.4s ease; padding: 20px; box-sizing: border-box;
         }
         #authOverlay.hidden { opacity: 0; visibility: hidden; pointer-events: none; }
         
         .auth-card {
             background: #fff; width: 100%; max-width: 420px; border-radius: 24px;
-            padding: 40px; box-shadow: 0 25px 70px rgba(0,0,0,0.15); text-align: center;
+            padding: 30px; box-shadow: 0 25px 70px rgba(0,0,0,0.15); text-align: center;
             position: relative; animation: slideUp 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+            max-height: 95vh; overflow-y: auto;
         }
-        .auth-logo { height: 65px; border-radius: 14px; margin-bottom: 20px; box-shadow: 0 8px 20px rgba(0,0,0,0.1); transition: transform 0.3s; }
+        .auth-card::-webkit-scrollbar { width: 4px; }
+        .auth-card::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.1); border-radius: 4px; }
+
+        .auth-logo { height: 60px; border-radius: 14px; margin-bottom: 15px; box-shadow: 0 8px 20px rgba(0,0,0,0.1); transition: transform 0.3s; }
         .auth-logo:hover { transform: scale(1.05); }
-        .auth-card h2 { margin: 0 0 8px 0; font-weight: 800; font-size: 1.6rem; color: var(--text-main); }
-        .auth-card p { color: var(--text-muted); font-size: 0.95rem; margin-bottom: 20px; }
+        .auth-card h2 { margin: 0 0 8px 0; font-weight: 800; font-size: 1.5rem; color: var(--text-main); }
+        .auth-card p { color: var(--text-muted); font-size: 0.9rem; margin-bottom: 20px; }
         
         /* Auth Tabs UI */
-        .auth-tabs { display: flex; gap: 10px; margin-bottom: 25px; background: rgba(0,0,0,0.03); padding: 5px; border-radius: 16px; }
-        .auth-tab { flex: 1; padding: 10px; text-align: center; cursor: pointer; border-radius: 12px; font-weight: 700; color: var(--text-muted); transition: all 0.3s ease; font-size: 0.95rem; }
+        .auth-tabs { display: flex; gap: 10px; margin-bottom: 20px; background: rgba(0,0,0,0.03); padding: 5px; border-radius: 16px; }
+        .auth-tab { flex: 1; padding: 10px; text-align: center; cursor: pointer; border-radius: 12px; font-weight: 700; color: var(--text-muted); transition: all 0.3s ease; font-size: 0.9rem; }
         .auth-tab.active { background: #fff; color: var(--theme-color); box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
 
         .auth-step { display: none; animation: slideUp 0.4s ease forwards; }
@@ -74,15 +78,15 @@
         .auth-form-section.active { display: block; }
 
         .auth-input {
-            width: 100%; padding: 16px; border: 1px solid var(--glass-border);
-            border-radius: 14px; font-size: 1rem; margin-bottom: 16px; box-sizing: border-box;
+            width: 100%; padding: 14px; border: 1px solid var(--glass-border);
+            border-radius: 12px; font-size: 0.95rem; margin-bottom: 12px; box-sizing: border-box;
             background: rgba(0,0,0,0.02); transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
         }
         .auth-input:focus { border-color: var(--theme-color); outline: none; background: #fff; box-shadow: 0 0 0 4px rgba(0,122,255,0.15); transform: translateY(-2px); }
         
         .auth-btn {
-            width: 100%; padding: 16px; background: var(--theme-color); color: #fff;
-            border: none; border-radius: 14px; font-size: 1.05rem; font-weight: 700; cursor: pointer;
+            width: 100%; padding: 14px; background: var(--theme-color); color: #fff;
+            border: none; border-radius: 12px; font-size: 1rem; font-weight: 700; cursor: pointer;
             transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1); box-shadow: 0 6px 20px rgba(0,122,255,0.3); display: flex; justify-content: center; align-items: center; gap: 8px;
         }
         .auth-btn:hover:not(:disabled) { transform: translateY(-3px); box-shadow: 0 8px 25px rgba(0,122,255,0.45); background: var(--theme-hover); }
@@ -91,11 +95,17 @@
         
         .auth-error { color: #FF3B30; font-size: 0.85rem; margin-top: -10px; margin-bottom: 15px; display: none; text-align: left; font-weight: 600; padding: 10px; background: rgba(255,59,48,0.1); border-radius: 8px;}
         
-        .guest-mode-btn { margin-top: 25px; background: transparent; border: none; color: var(--text-muted); font-size: 0.9rem; font-weight: 600; cursor: pointer; transition: 0.2s; display: flex; align-items: center; justify-content: center; gap: 6px; width: 100%;}
+        .guest-mode-btn { margin-top: 15px; background: transparent; border: none; color: var(--text-muted); font-size: 0.9rem; font-weight: 600; cursor: pointer; transition: 0.2s; display: flex; align-items: center; justify-content: center; gap: 6px; width: 100%;}
         .guest-mode-btn:hover { color: var(--theme-color); }
 
+        /* LEGAL & ABOUT COMPONENT */
+        .legal-footer { margin-top: 20px; padding-top: 15px; border-top: 1px solid var(--glass-border); font-size: 0.75rem; color: var(--text-muted); text-align: center; line-height: 1.4; }
+        .legal-footer strong { color: var(--text-main); }
+        .legal-link { color: var(--theme-color); text-decoration: none; font-weight: 600; transition: 0.2s; }
+        .legal-link:hover { text-decoration: underline; }
+
         /* --- MAIN APP LAYOUT --- */
-        .app-wrapper { display: flex; width: 100%; max-width: 1400px; height: 96vh; gap: 20px; padding: 0 20px; animation: fadeIn 0.8s ease; }
+        .app-wrapper { display: flex; width: 100%; max-width: 1400px; height: 96dvh; gap: 20px; padding: 0 20px; animation: fadeIn 0.8s ease; }
 
         /* --- SIDEBAR --- */
         .sidebar {
@@ -148,7 +158,7 @@
         .chat-container {
             flex: 1; background: var(--glass-bg); backdrop-filter: blur(30px);
             border: 1px solid var(--glass-border); border-radius: 24px; display: flex; flex-direction: column;
-            overflow: hidden; box-shadow: 0 20px 50px rgba(0,0,0,0.1); position: relative;
+            overflow: hidden; box-shadow: 0 20px 50px rgba(0,0,0,0.1); position: relative; height: 100%;
         }
 
         /* Header */
@@ -203,25 +213,25 @@
         /* --- WELCOME SCREEN (DYNAMIC) --- */
         .welcome-screen {
             flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center;
-            padding: 40px; text-align: center; animation: fadeIn 0.8s ease;
+            padding: 20px; text-align: center; animation: fadeIn 0.8s ease; overflow-y: auto;
         }
         .welcome-screen.hidden { display: none; }
-        .welcome-screen h2 { font-size: 2.5rem; font-weight: 800; color: var(--text-main); margin-bottom: 10px; letter-spacing: -1px;}
+        .welcome-screen h2 { font-size: 2.2rem; font-weight: 800; color: var(--text-main); margin-bottom: 10px; letter-spacing: -1px;}
         .welcome-screen h2 span { background: linear-gradient(135deg, #007AFF, #34C759); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-        .welcome-screen p { font-size: 1.1rem; color: var(--text-muted); margin-bottom: 40px; }
+        .welcome-screen p { font-size: 1rem; color: var(--text-muted); margin-bottom: 30px; }
         
         .suggestion-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; max-width: 800px; width: 100%; }
         .suggestion-card {
-            background: #fff; border: 1px solid var(--glass-border); padding: 20px; border-radius: 16px;
-            text-align: left; cursor: pointer; transition: all 0.3s ease; box-shadow: 0 4px 15px rgba(0,0,0,0.03); display: flex; flex-direction: column; gap: 10px;
+            background: #fff; border: 1px solid var(--glass-border); padding: 15px; border-radius: 16px;
+            text-align: left; cursor: pointer; transition: all 0.3s ease; box-shadow: 0 4px 15px rgba(0,0,0,0.03); display: flex; flex-direction: column; gap: 8px;
         }
-        .suggestion-card i { font-size: 1.8rem; color: var(--theme-color); }
-        .suggestion-card strong { font-size: 1.05rem; color: var(--text-main); }
-        .suggestion-card span { font-size: 0.85rem; color: var(--text-muted); line-height: 1.4; }
-        .suggestion-card:hover { transform: translateY(-5px); box-shadow: 0 12px 25px rgba(0,0,0,0.08); border-color: rgba(0,122,255,0.3); }
+        .suggestion-card i { font-size: 1.6rem; color: var(--theme-color); }
+        .suggestion-card strong { font-size: 1rem; color: var(--text-main); }
+        .suggestion-card span { font-size: 0.8rem; color: var(--text-muted); line-height: 1.4; }
+        .suggestion-card:hover { transform: translateY(-3px); box-shadow: 0 10px 20px rgba(0,0,0,0.08); border-color: rgba(0,122,255,0.3); }
 
         /* --- CHAT AREA --- */
-        .chat-box { flex: 1; padding: 30px; overflow-y: auto; display: none; flex-direction: column; gap: 24px; scroll-behavior: smooth; }
+        .chat-box { flex: 1; padding: 20px; overflow-y: auto; display: none; flex-direction: column; gap: 24px; scroll-behavior: smooth; }
         .chat-box.active { display: flex; }
         .chat-box::-webkit-scrollbar { width: 6px; }
         .chat-box::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.2); border-radius: 10px; }
@@ -229,82 +239,79 @@
         .message-wrapper { display: flex; flex-direction: column; max-width: 85%; animation: messagePop 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
         .user-wrapper { align-self: flex-end; align-items: flex-end; }
         .bot-wrapper { align-self: flex-start; align-items: flex-start; width: 100%; }
-        .message { line-height: 1.7; font-size: 1.05rem; word-wrap: break-word; width: 100%; }
+        .message { line-height: 1.6; font-size: 1rem; word-wrap: break-word; width: 100%; }
 
-        .user-msg { background: var(--theme-color); padding: 14px 20px; border-radius: 22px; border-bottom-right-radius: 6px; color: #fff; box-shadow: 0 8px 20px rgba(0,122,255,0.25); font-weight: 500; }
+        .user-msg { background: var(--theme-color); padding: 12px 18px; border-radius: 20px; border-bottom-right-radius: 4px; color: #fff; box-shadow: 0 6px 15px rgba(0,122,255,0.2); font-weight: 500; }
         .user-msg img, .user-msg video, .user-msg audio { max-width: 100%; border-radius: 12px; margin-top: 10px; outline: none; }
         .file-card { display: flex; align-items: center; gap: 12px; background: rgba(0,0,0,0.2); padding: 12px 16px; border-radius: 12px; margin-top: 10px; font-size: 0.95rem; }
 
-        .bot-msg { background: transparent; padding: 0 10px; min-height: 24px; color: var(--text-main); }
+        .bot-msg { background: transparent; padding: 0 5px; min-height: 24px; color: var(--text-main); }
 
         /* Reasoning Block */
-        .reasoning { margin: 10px 0 20px 0; border: 1px solid rgba(0,0,0,0.08); border-radius: 16px; background: #F8F8F8; box-shadow: 0 4px 15px rgba(0,0,0,0.03); transition: all 0.3s ease; }
-        .reasoning summary { padding: 14px 18px; font-size: 0.95rem; color: var(--text-muted); cursor: pointer; outline: none; user-select: none; font-weight: 700; background: #fff; border-radius: 16px; display: flex; align-items: center; gap: 10px; transition: 0.2s; border: 1px solid transparent; }
+        .reasoning { margin: 10px 0 15px 0; border: 1px solid rgba(0,0,0,0.08); border-radius: 16px; background: #F8F8F8; box-shadow: 0 4px 15px rgba(0,0,0,0.03); transition: all 0.3s ease; }
+        .reasoning summary { padding: 12px 16px; font-size: 0.9rem; color: var(--text-muted); cursor: pointer; outline: none; user-select: none; font-weight: 700; background: #fff; border-radius: 16px; display: flex; align-items: center; gap: 10px; transition: 0.2s; border: 1px solid transparent; }
         .reasoning[open] summary { border-radius: 16px 16px 0 0; border-bottom: 1px solid rgba(0,0,0,0.08); color: var(--theme-color); }
         .reasoning summary:hover { border-color: rgba(0,0,0,0.1); color: var(--text-main); }
-        .timer-badge { background: rgba(0,0,0,0.05); padding: 4px 12px; border-radius: 20px; font-size: 0.8rem; margin-left: auto; color: var(--text-main); font-variant-numeric: tabular-nums; font-weight: bold; }
-        .reasoning-content { padding: 20px; font-size: 0.95rem; color: #555; white-space: pre-wrap; max-height: 400px; overflow-y: auto; overscroll-behavior: contain; }
-        
-        /* Actions & Formatting */
-        .msg-actions { display: flex; gap: 10px; margin-top: 12px; padding-left: 10px; }
-        .action-btn { background: #fff; border: 1px solid var(--glass-border); color: var(--text-muted); cursor: pointer; display: flex; align-items: center; gap: 6px; font-size: 0.85rem; font-weight: 700; transition: all 0.2s; padding: 8px 14px; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
-        .action-btn:hover { color: var(--theme-color); border-color: var(--theme-color); transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,122,255,0.15); }
+        .timer-badge { background: rgba(0,0,0,0.05); padding: 4px 10px; border-radius: 20px; font-size: 0.75rem; margin-left: auto; color: var(--text-main); font-variant-numeric: tabular-nums; font-weight: bold; }
+        .reasoning-content { padding: 15px; font-size: 0.95rem; color: #555; white-space: pre-wrap; max-height: 350px; overflow-y: auto; overscroll-behavior: contain; }
         
         /* Markdown Overrides */
         .bot-msg p { margin-bottom: 14px; margin-top: 0;}
-        .bot-msg pre { background: #1E1E1E; padding: 45px 20px 20px 20px; border-radius: 16px; color: #fff; border: 1px solid rgba(0,0,0,0.2); overflow-x: auto; margin: 20px 0; position: relative; box-shadow: 0 10px 30px rgba(0,0,0,0.3); }
+        .bot-msg pre { background: #1E1E1E; padding: 40px 16px 16px 16px; border-radius: 14px; color: #fff; border: 1px solid rgba(0,0,0,0.2); overflow-x: auto; margin: 15px 0; position: relative; box-shadow: 0 8px 25px rgba(0,0,0,0.25); }
         .bot-msg code { font-family: 'SFMono-Regular', Consolas, Menlo, monospace; background: rgba(0,0,0,0.05); color: #D32F2F; padding: 3px 6px; border-radius: 6px; font-size: 0.9em; }
         .bot-msg pre code { background: transparent; padding: 0; font-size: 0.95rem; color: #E5E5EA; }
-        .code-copy-btn { position: absolute; top: 10px; right: 10px; background: rgba(255,255,255,0.15); color: #fff; border: none; padding: 8px 14px; border-radius: 10px; font-size: 0.8rem; font-weight: bold; cursor: pointer; transition: 0.2s; display: flex; align-items: center; gap: 6px; backdrop-filter: blur(10px); }
+        .code-copy-btn { position: absolute; top: 8px; right: 8px; background: rgba(255,255,255,0.15); color: #fff; border: none; padding: 6px 12px; border-radius: 8px; font-size: 0.75rem; font-weight: bold; cursor: pointer; transition: 0.2s; display: flex; align-items: center; gap: 6px; backdrop-filter: blur(10px); }
         .code-copy-btn:hover { background: rgba(255,255,255,0.3); transform: scale(1.05); }
         .bot-msg ul, .bot-msg ol { margin-bottom: 15px; padding-left: 20px; }
         .bot-msg li { margin-bottom: 5px; }
 
         /* Workspace Command UI */
-        .workspace-card { background: #fff; border: 1px solid rgba(0,122,255,0.3); border-radius: 16px; padding: 20px; margin-top: 15px; box-shadow: 0 8px 25px rgba(0,122,255,0.1); }
-        .workspace-card-title { display:flex; align-items:center; gap:10px; font-weight:800; color:var(--theme-color); margin-bottom:12px; font-size:1rem;}
-        .workspace-card pre { background: #f8f8f8; color:#333; padding: 15px; border-radius: 12px; border: 1px solid rgba(0,0,0,0.05); margin:0; white-space: pre-wrap; font-size: 0.9rem; overflow-x: auto;}
+        .workspace-card { background: #fff; border: 1px solid rgba(0,122,255,0.3); border-radius: 16px; padding: 15px; margin-top: 15px; box-shadow: 0 5px 20px rgba(0,122,255,0.1); }
+        .workspace-card-title { display:flex; align-items:center; gap:8px; font-weight:800; color:var(--theme-color); margin-bottom:10px; font-size:0.95rem;}
+        .workspace-card pre { background: #f8f8f8; color:#333; padding: 12px; border-radius: 12px; border: 1px solid rgba(0,0,0,0.05); margin:0; white-space: pre-wrap; font-size: 0.85rem; overflow-x: auto;}
 
         /* --- INPUT AREA --- */
-        .input-area { padding: 20px 30px; background: rgba(255, 255, 255, 0.95); border-top: 1px solid var(--glass-border); display: flex; gap: 14px; align-items: center; position: relative; }
-        .input-wrapper { flex: 1; display: flex; align-items: center; background: #fff; border: 1px solid rgba(0,0,0,0.15); border-radius: 30px; padding: 8px 12px 8px 20px; transition: all 0.3s ease; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
-        .input-wrapper:focus-within { border-color: var(--theme-color); box-shadow: 0 0 0 5px rgba(0,122,255,0.15); transform: translateY(-1px); }
-        input[type="text"] { flex: 1; padding: 12px 8px; border: none; background: transparent; color: var(--text-main); font-size: 1.1rem; outline: none; font-weight: 500; }
+        .input-area { padding: 15px 20px; background: rgba(255, 255, 255, 0.98); border-top: 1px solid var(--glass-border); display: flex; gap: 12px; align-items: center; position: relative; z-index: 100;}
+        .input-wrapper { flex: 1; display: flex; align-items: center; background: #fff; border: 1px solid rgba(0,0,0,0.15); border-radius: 30px; padding: 6px 12px 6px 16px; transition: all 0.3s ease; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
+        .input-wrapper:focus-within { border-color: var(--theme-color); box-shadow: 0 0 0 4px rgba(0,122,255,0.15); transform: translateY(-1px); }
+        input[type="text"] { flex: 1; padding: 10px 8px; border: none; background: transparent; color: var(--text-main); font-size: 1.05rem; outline: none; font-weight: 500; }
         
-        .attachment-btn { color: var(--text-muted); cursor: pointer; font-size: 1.8rem; padding: 8px; transition: 0.2s; border-radius: 50%; display: flex; align-items: center; justify-content: center; }
+        .attachment-btn { color: var(--text-muted); cursor: pointer; font-size: 1.6rem; padding: 6px; transition: 0.2s; border-radius: 50%; display: flex; align-items: center; justify-content: center; }
         .attachment-btn:hover { color: var(--theme-color); background: rgba(0,122,255,0.1); transform: rotate(15deg); }
         #fileInput { display: none; }
 
-        #attachmentPreview { display: none; position: absolute; top: -60px; left: 30px; background: #fff; border: 1px solid var(--glass-border); color: var(--text-main); padding: 10px 20px; border-radius: 14px; font-size: 0.95rem; font-weight: 700; align-items: center; gap: 14px; box-shadow: 0 10px 30px rgba(0,0,0,0.15); z-index: 100; animation: slideUp 0.3s ease;}
-        .processing-spinner { width: 18px; height: 18px; border: 3px solid rgba(0,0,0,0.1); border-top: 3px solid var(--theme-color); border-radius: 50%; animation: rotateSpin 1s linear infinite; display: none; }
-        #attachmentPreview span.remove { cursor: pointer; font-weight: bold; color: #FF3B30; font-size: 1.4rem; transition: 0.2s; }
+        #attachmentPreview { display: none; position: absolute; top: -50px; left: 20px; background: #fff; border: 1px solid var(--glass-border); color: var(--text-main); padding: 8px 16px; border-radius: 12px; font-size: 0.9rem; font-weight: 700; align-items: center; gap: 12px; box-shadow: 0 8px 25px rgba(0,0,0,0.15); z-index: 100; animation: slideUp 0.3s ease;}
+        .processing-spinner { width: 16px; height: 16px; border: 2px solid rgba(0,0,0,0.1); border-top: 2px solid var(--theme-color); border-radius: 50%; animation: rotateSpin 1s linear infinite; display: none; }
+        #attachmentPreview span.remove { cursor: pointer; font-weight: bold; color: #FF3B30; font-size: 1.2rem; transition: 0.2s; }
         #attachmentPreview span.remove:hover { transform: scale(1.2); }
 
-        .controls { display: flex; gap: 10px; }
-        button.action-main { padding: 0 28px; height: 54px; border-radius: 27px; border: none; color: #fff; font-weight: 800; font-size: 1.05rem; cursor: pointer; transition: all 0.3s ease; box-shadow: 0 6px 20px rgba(0,0,0,0.15); display: flex; align-items: center; justify-content: center; gap: 10px; }
+        .controls { display: flex; gap: 8px; }
+        button.action-main { padding: 0 24px; height: 48px; border-radius: 24px; border: none; color: #fff; font-weight: 800; font-size: 1rem; cursor: pointer; transition: all 0.3s ease; box-shadow: 0 4px 15px rgba(0,0,0,0.15); display: flex; align-items: center; justify-content: center; gap: 8px; }
         button.send-btn { background: var(--theme-color); }
         button.stop-btn { background: #FF3B30; display: none; }
-        button.action-main:hover:not(:disabled) { transform: translateY(-3px); box-shadow: 0 8px 25px rgba(0,122,255,0.4); }
-        button.stop-btn:hover:not(:disabled) { box-shadow: 0 8px 25px rgba(255,59,48,0.4); }
+        button.action-main:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,122,255,0.3); }
+        button.stop-btn:hover:not(:disabled) { box-shadow: 0 6px 20px rgba(255,59,48,0.3); }
 
         /* Media Queries for Mobile */
         @media (max-width: 900px) {
-            .app-wrapper { padding: 0; gap: 0; }
+            .app-wrapper { padding: 0; gap: 0; height: 100dvh; }
             .sidebar { position: fixed; left: -100%; top: 0; height: 100%; z-index: 1000; border-radius: 0; }
             .sidebar.show { left: 0; }
-            .chat-container { height: 100vh; border-radius: 0; border: none; box-shadow: none; }
+            .chat-container { height: 100dvh; border-radius: 0; border: none; box-shadow: none; }
             .suggestion-grid { grid-template-columns: 1fr; }
+            .header h1 { font-size: 1.1rem; }
+            .input-area { padding: 10px 15px; }
+            input[type="text"] { font-size: 1rem; }
+            button.action-main { padding: 0 16px; height: 44px; }
         }
     </style>
 </head>
 <body>
 
-    <!-- AUTHENTICATION OVERLAY WIZARD -->
     <div id="authOverlay">
         <div class="auth-card">
             <img src="https://i.ibb.co/tPCDFwYD/Blue-and-Black-Minimalist-Brand-Logo-20260426-113813-0000.png" alt="Vedika Logo" class="auth-logo">
             
-            <!-- Auth Selection Step (Login vs Register) -->
             <div class="auth-step active" id="step-auth-choice">
                 <h2>Welcome to Vedika</h2>
                 <div class="auth-tabs">
@@ -312,7 +319,6 @@
                     <div class="auth-tab" id="tab-register" onclick="switchAuthMode('register')">Create Account</div>
                 </div>
                 
-                <!-- Login Form -->
                 <div class="auth-form-section active" id="form-login">
                     <p>Enter your registered email to receive an OTP.</p>
                     <div class="auth-error" id="err-login"></div>
@@ -322,14 +328,13 @@
                     </button>
                 </div>
 
-                <!-- Registration Form -->
                 <div class="auth-form-section" id="form-register">
                     <p>Secure your identity on the Vedika network.</p>
                     <div class="auth-error" id="err-register"></div>
                     <input type="text" id="regName" class="auth-input" placeholder="Full Name" required>
                     <input type="email" id="regEmail" class="auth-input" placeholder="Email Address" required>
                     <input type="tel" id="regPhone" class="auth-input" placeholder="Phone Number" required>
-                    <p style="font-size:0.85rem; text-align:left; margin:5px 0 5px 5px; color: #666; font-weight:600;">Profile Picture (Optional)</p>
+                    <p style="font-size:0.8rem; text-align:left; margin:5px 0 5px 5px; color: #666; font-weight:600;">Profile Picture (Optional)</p>
                     <input type="file" id="regPic" class="auth-input" accept="image/*" style="padding: 10px;">
                     <button class="auth-btn" id="btn-register" onclick="registerAccount()">
                         Create Account <i class="ph-bold ph-user-plus"></i>
@@ -341,7 +346,6 @@
                 </button>
             </div>
 
-            <!-- OTP Verification Step -->
             <div class="auth-step" id="step-otp">
                 <h2>Verify Identity</h2>
                 <p>Enter the Alphanumeric OTP sent to your email.</p>
@@ -354,13 +358,16 @@
                     <i class="ph-bold ph-arrow-left"></i> Go Back
                 </button>
             </div>
+            
+            <div class="legal-footer">
+                <strong>About Vedika:</strong> An enterprise-grade AI assistant offering lightning-fast, highly secure, and multi-dimensional reasoning capabilities, deeply integrated with your workflow.<br><br>
+                By continuing, you agree to our <a href="https://divypatel1232773-beep.github.io/Vedika-advanced-AI-terms-and-conditions-privacy-policy/" target="_blank" class="legal-link">Privacy Policy & Terms of Service</a>.
+            </div>
         </div>
     </div>
 
-    <!-- MAIN APPLICATION UI -->
     <div class="app-wrapper">
         
-        <!-- SIDEBAR (Chat History) -->
         <div class="sidebar" id="appSidebar">
             <div class="guest-sidebar-overlay" id="guestOverlay">
                 <i class="ph-bold ph-lock-key"></i>
@@ -371,8 +378,7 @@
                 <button class="new-chat-btn" onclick="startNewSession()"><i class="ph-bold ph-plus"></i> New Chat Session</button>
             </div>
             <div class="history-list" id="historyList">
-                <!-- Sessions load here -->
-            </div>
+                </div>
             <div class="sidebar-footer">
                 <div class="user-profile">
                     <img src="https://i.ibb.co/tPCDFwYD/Blue-and-Black-Minimalist-Brand-Logo-20260426-113813-0000.png" id="userAvatar" alt="User Avatar">
@@ -385,7 +391,6 @@
             </div>
         </div>
 
-        <!-- CHAT INTERFACE -->
         <div class="chat-container">
             <div class="header">
                 <div class="brand">
@@ -397,12 +402,10 @@
                 </div>
                 
                 <div class="header-controls">
-                    <!-- Google Workspace Toggle -->
                     <div class="workspace-toggle" id="workspaceToggle" onclick="toggleWorkspace()" title="Enable Google Apps Script Backend">
-                        <div class="toggle-dot"></div> Workspace Command
+                        <div class="toggle-dot"></div> Workspace
                     </div>
 
-                    <!-- Model Dropdown -->
                     <div class="custom-dropdown-container">
                         <div class="custom-dropdown-btn" onclick="toggleDropdown(event)">
                             <span id="btnModelName">Select AI Model</span> <i class="ph-bold ph-caret-down"></i>
@@ -419,17 +422,17 @@
                 </div>
             </div>
             
-            <!-- Welcome Screen -->
             <div class="welcome-screen" id="welcomeScreen">
                 <h2>Good <span id="timeOfDay">Day</span>, <span id="welcomeName">User</span></h2>
                 <p>I am Vedika, your enterprise AI assistant. How can I help you accelerate today?</p>
                 <div class="suggestion-grid" id="suggestionGrid"></div>
+                <div style="margin-top: 40px; font-size: 0.8rem; color: #999;">
+                    <a href="https://divypatel1232773-beep.github.io/Vedika-advanced-AI-terms-and-conditions-privacy-policy/" target="_blank" style="color: var(--theme-color); text-decoration: none;">Privacy & Terms</a> • © 2026 Vedika AI
+                </div>
             </div>
 
-            <!-- Active Chat Box -->
             <div class="chat-box" id="chatBox"></div>
             
-            <!-- Input Form Area -->
             <div class="input-area">
                 <div id="attachmentPreview">
                     <div class="file-info"><i class="ph ph-file" id="previewIcon"></i> <span id="previewText">Reading file...</span></div>
@@ -544,8 +547,18 @@ Valid services: gmail_read_unread, gmail_send (to, subject, body), calendar_agen
         let currentMode = 'flash'; let chatHistory = []; let currentFile = { name: null };
         let abortController = null; let thinkingTimerInterval = null; let thinkingSeconds = 0; let isUserScrolling = false;
         
+        // --- PROPER SCROLLING LOGIC ---
+        document.getElementById('chatBox').addEventListener('scroll', () => {
+            const box = document.getElementById('chatBox');
+            // Allow 10px threshold to determine if user manually scrolled up
+            isUserScrolling = Math.abs((box.scrollHeight - box.scrollTop) - box.clientHeight) > 10; 
+        });
+
         function scrollToBottom() {
-            if (!isUserScrolling) { const box = document.getElementById('chatBox'); box.scrollTo({ top: box.scrollHeight, behavior: 'smooth' }); }
+            if (!isUserScrolling) { 
+                const box = document.getElementById('chatBox'); 
+                box.scrollTo({ top: box.scrollHeight, behavior: 'smooth' }); 
+            }
         }
 
         window.onload = () => {
@@ -697,13 +710,12 @@ Valid services: gmail_read_unread, gmail_send (to, subject, body), calendar_agen
                 data.messages.forEach(m => {
                     chatHistory.push({role: m.role, content: m.content});
                     if(m.role === "user") {
-                        // Hide file injection block from UI in history
                         let cleanText = m.content.includes("File: ") ? m.content.split("\nUser: ")[1] || m.content : m.content;
                         appendUserMessage(cleanText, {name:null});
                     } else {
                         const botWrapper = document.createElement('div'); botWrapper.className = 'message-wrapper bot-wrapper';
                         const botMsgDiv = document.createElement('div'); botMsgDiv.className = 'message bot-msg';
-                        renderLiveResponse(botMsgDiv, m.content, true); // true = isHistory
+                        renderLiveResponse(botMsgDiv, m.content, true); 
                         botWrapper.appendChild(botMsgDiv); document.getElementById('chatBox').appendChild(botWrapper);
                     }
                 });
@@ -785,19 +797,18 @@ Valid services: gmail_read_unread, gmail_send (to, subject, body), calendar_agen
             } catch (err) { clearInterval(thinkingTimerInterval); resetUIControls(); } 
         }
 
-        // --- Robust Workspace JSON Extractor ---
         async function handleGoogleCommand(content, container) {
             try {
                 const splitContent = content.split('---FINAL_OUTPUT---')[1] || content;
                 const startIdx = splitContent.indexOf('{'); const endIdx = splitContent.lastIndexOf('}');
-                if (startIdx === -1 || endIdx === -1) return; // Not a JSON command
+                if (startIdx === -1 || endIdx === -1) return; 
                 const jsonText = splitContent.substring(startIdx, endIdx + 1); const cmd = JSON.parse(jsonText);
-                if (!cmd.service) return; // Not a valid command structure
+                if (!cmd.service) return; 
 
                 container.innerHTML += `<div class="workspace-card"><div class="workspace-card-title"><i class="ph-bold ph-arrows-clockwise ph-spin"></i> Executing Google Action: ${cmd.service}...</div></div>`; scrollToBottom();
                 const res = await fetch(GAS_BACKEND_URL, { method: 'POST', body: JSON.stringify({ action: "google_command", email: currentUser.email, service: cmd.service, data: cmd.data || {} }) });
                 const data = await res.json();
-                container.lastChild.remove(); // Remove loading card
+                container.lastChild.remove(); 
                 if(data.success) { container.innerHTML += `<div class="workspace-card"><div class="workspace-card-title" style="color:var(--accent-green);"><i class="ph-bold ph-check-circle"></i> Action Completed Successfully</div><pre>${JSON.stringify(data.data || data.message, null, 2)}</pre></div>`;
                 } else { container.innerHTML += `<div class="workspace-card"><div class="workspace-card-title" style="color:#FF3B30;"><i class="ph-bold ph-warning-circle"></i> Execution Failed</div><pre>${data.message}</pre></div>`; }
                 scrollToBottom();
@@ -828,8 +839,8 @@ Valid services: gmail_read_unread, gmail_send (to, subject, body), calendar_agen
                 thinkContent = rawText.substring(0, splitIndex).trim();
                 answerContent = rawText.substring(splitIndex + divider.length).trim();
             } else {
-                if (isHistory) answerContent = rawText.trim(); // Old legacy history without divider
-                else thinkContent = rawText.trim(); // Live typing
+                if (isHistory) answerContent = rawText.trim(); 
+                else thinkContent = rawText.trim(); 
             }
 
             if (thinkContent) {
